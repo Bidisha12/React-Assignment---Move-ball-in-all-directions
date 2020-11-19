@@ -18,68 +18,60 @@ const App = () => {
       top: "0px",
     })
   };
-  const checkRender= ()=> {setRenderBall(true)};
+  
+  const start= ()=>
+  {
+    setRenderBall(true);
+  }
   const renderChoice = () => {
-    if(renderBall===true)
-    {
-      return <div className="ball" style={ballPosition}></div>
-    }
-    else{
-      return <button className="start" onClick={checkRender}>Start</button>
-    }
+    return renderBall ? (
+      <div className="ball" style={{
+        position: 'absolute',
+        left: ballPosition.left,
+        top: ballPosition.top,
+      }}></div>
+    ) : (
+      <button onClick={start} className="start">Start</button>
+    );
   };
 
-  const moveBall= (evt)=>{
-    if(renderBall===true)
-    {
-      if(evt.key=== "ArrowUp")
+  const updateXY=(newX,newY)=>
+  {
+    setX(newX);
+    setY(newY);
+    setBallPosition(
       {
-        y-=5;
-        setY(y);
-        setBallPosition({
-          top: y + "px",
-          left: x + "px"
-        });
+        left: newX + 'px',
+        top: newY + 'px'
       }
-      else if(evt.key=== "ArrowDown")
-      {
-        y+=5;
-        setY(y);
-        setBallPosition({
-          ...ballPosition,
-          top: y + "px",
-          left: x + "px"
-        });   
-      }
-
-      else if(evt.key=== "ArrowLeft")
-      {
-        x-=5;
-        setX(x);
-        setBallPosition({
-          ...ballPosition,
-          top: y + "px",
-          left: x + "px"
-        });   
-      }
-      else if(evt.key=== "ArrowRight")
-      {
-        x+=5;
-        setX(x);
-        setBallPosition({
-          ...ballPosition,
-          top: y + "px",
-          left: x + "px"
-        });   
-      }
-    }
+    );
   }
   useEffect(()=>{
-    window.addEventListener('keydown',moveBall);
-    return ()=>
+    const keyListener= (evt)=>{
+      console.log("Listend to key", renderBall, x,y);
+    if(renderBall)
     {
-      window.addEventListener('keydown',moveBall);
+      if(evt.keyCode=== 37)
+      {
+        updateXY(x-5,y);
+      }
+      else if (evt.keyCode=== 38)
+      {
+        updateXY(x,y-5);
+      }
+      else if (evt.keyCode=== 39)
+      {
+        updateXY(x+5,y);
+      }
+      else if (evt.keyCode=== 40)
+      {
+        updateXY(x,y+5);
+      }
+    }
     };
+    document.addEventListener('keydown', keyListener);
+    //cleanup
+    return()=> document.removeEventListener("keydown",keyListener);
   });
   return (
     <div className="playground">
